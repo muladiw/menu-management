@@ -4,12 +4,13 @@ import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { MenuTableTestHelper } from '../src/test/MenuTableTestHelper';
 
-describe('/api e2e', () => {
+describe('/menu e2e', () => {
   let app: INestApplication;
   afterAll(async () => {
     await MenuTableTestHelper.cleanTable();
   });
 
+  let mockMenu;
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -70,6 +71,39 @@ describe('/api e2e', () => {
         expect(responses[i].statusCode).toEqual(errorCode || 400);
         expect(responses[i].body.pesan).toEqual(message);
       }
+    });
+  });
+
+  describe('need menu data', () => {
+    beforeAll(async () => {
+      await MenuTableTestHelper.cleanTable();
+      mockMenu = [await MenuTableTestHelper.addMenu({ name: 'dashboard' })];
+    });
+    afterAll(async () => {
+      await MenuTableTestHelper.cleanTable();
+    });
+    describe('when GET /menu/last-depth', () => {
+      it('/menu GET', async () => {
+        const response = await request(app.getHttpServer()).get(
+          '/menu/last-depth',
+        );
+
+        expect(response.statusCode).toEqual(200);
+        expect(response.body.depth).toEqual(mockMenu[0].depth);
+      });
+    });
+
+    describe('when GET /menu data', () => {
+      it('/menu GET', async () => {
+        const response = await request(app.getHttpServer()).get('/menu');
+
+        expect(response.statusCode).toEqual(200);
+        const { menu } = response.body;
+        expect(menu).toHaveLength(1);
+        expect(menu[0].id).toBeDefined();
+        expect(menu[0].name).toEqual(mockMenu[0].name);
+        expect(menu[0].depth).toEqual(mockMenu[0].depth);
+      });
     });
   });
 });

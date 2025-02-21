@@ -46,4 +46,45 @@ describe('MenuController', () => {
       expect(provider.addMenu).toHaveBeenCalledWith(mockUseCasePayload);
     });
   });
+  describe('getLastDepth function', () => {
+    it('should orchestrating get last depth action correctly', async () => {
+      // Arrange
+      const mockResult = 1;
+
+      /** creating dependency of use case */
+      /** mocking needed function */
+      jest
+        .spyOn(provider, 'getLastDepth')
+        .mockImplementation(() => Promise.resolve(mockResult));
+
+      // Action
+      const result = await controller.getLastDepth();
+
+      // Assert
+      expect(result).toEqual({ depth: mockResult });
+      expect(provider.getLastDepth).toHaveBeenCalledWith();
+    });
+  });
+  describe('getMenu function', () => {
+    it('should orchestrating get menu action correctly', async () => {
+      // Arrange
+      const mockUseCasePayload = { idParent: 'idParent' };
+      const mockResult = [];
+
+      /** creating dependency of use case */
+      /** mocking needed function */
+      jest
+        .spyOn(provider, 'getMenu')
+        .mockImplementation(() => Promise.resolve(mockResult));
+
+      // Action
+      const result = await controller.getMenu(mockUseCasePayload);
+
+      // Assert
+      expect(result).toEqual({ menu: mockResult });
+      expect(provider.getMenu).toHaveBeenCalledWith(
+        mockUseCasePayload.idParent,
+      );
+    });
+  });
 });

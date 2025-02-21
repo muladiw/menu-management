@@ -10,6 +10,7 @@ describe('MenuRepository', () => {
   afterAll(async () => {
     await MenuTableTestHelper.cleanTable();
   });
+  let mockMenu;
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -50,6 +51,38 @@ describe('MenuRepository', () => {
       await expect(
         menuRepository.checkDuplicateDepth(payload),
       ).resolves.not.toThrow(InvariantError);
+    });
+  });
+  describe('need menu data', () => {
+    beforeAll(async () => {
+      await MenuTableTestHelper.cleanTable();
+      mockMenu = [await MenuTableTestHelper.addMenu({ name: 'dashboard' })];
+    });
+    afterAll(async () => {
+      await MenuTableTestHelper.cleanTable();
+    });
+    describe('getLastDepth function', () => {
+      it('should persist get last depth menu correctly', async () => {
+        // Arrange
+        // Action
+        const result = await menuRepository.getLastDepth();
+
+        // Assert
+        expect(result).toEqual(1);
+      });
+    });
+    describe('getMenu function', () => {
+      it('should persist get menu correctly', async () => {
+        // Arrange
+        // Action
+        const result = await menuRepository.getMenu();
+
+        // Assert
+        expect(result).toHaveLength(1);
+        expect(result[0].id).toEqual(mockMenu[0].id);
+        expect(result[0].name).toEqual(mockMenu[0].name);
+        expect(result[0].depth).toEqual(mockMenu[0].depth);
+      });
     });
   });
 });
