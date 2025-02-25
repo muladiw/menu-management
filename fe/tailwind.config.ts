@@ -45,4 +45,3 @@ const config: Config = {
   darkMode: 'selector',
 };
 export default config;
-

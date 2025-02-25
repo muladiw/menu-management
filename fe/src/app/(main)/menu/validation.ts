@@ -6,4 +6,5 @@ export const Schema = z.object({
   depth: z.number().min(1),
   depth2: z.string().optional(),
   parent: z.string().optional(),
+  nameParent: z.string().optional(),
 });
